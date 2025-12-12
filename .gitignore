@@ -12,3 +12,44 @@
 #!.yarn/cache
 .pnp.*
 node_modules
+
+### Node ###
+node_modules/
+dist/
+build/
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Optional caches
+.npm
+.eslintcache
+
+### TypeScript ###
+*.tsbuildinfo
+next-env.d.ts
+
+### Env ###
+.env
+.env.*
+.env*.local
+
+### NextJS ###
+.next/
+out/
+.vercel
+
+### Testing ###
+coverage/
+
+### Docker ###
+docker-data/
+
+### macOS ###
+.DS_Store
+.AppleDouble
+.LSOverride
