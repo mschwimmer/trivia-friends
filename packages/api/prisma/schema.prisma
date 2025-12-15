@@ -15,10 +15,30 @@ datasource db {
 
 model User {
   id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
   email String @unique
   username String
   firebaseUid String @unique
   provider String?
+  boards TriviaBoard[]
+  questions Question[]
+}
+
+model TriviaBoard {
+  id Int @id @default(autoincrement())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  author User? @relation(fields: [authorId], references: [id])
+  authorId Int? 
+}
+
+model Question {
+  id Int @id @default(autoincrement())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  author User? @relation(fields: [authorId], references: [id])
+  authorId Int?
+  question String
+  answer String
 }
