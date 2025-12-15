@@ -1,0 +1,40 @@
+{
+  "name": "api",
+  "type": "module",
+  "scripts": {
+    "compile": "tsc",
+    "start": "yarn run compile && node ./dist/index.js",
+    "dev": "ts-node-dev src/index.ts",
+    "type-check": "tsc --noEmit",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate",
+    "prisma:studio": "prisma studio",
+    "prisma:seed": "tsx prisma/seed.ts"
+  },
+  "dependencies": {
+    "@apollo/server": "^5.2.0",
+    "@prisma/adapter-pg": "^7.1.0",
+    "@prisma/client": "^7.1.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "graphql": "^16.12.0",
+    "pg": "^8.16.3"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.6",
+    "@types/node": "^25.0.1",
+    "@types/pg": "^8.16.0",
+    "jest": "^30.2.0",
+    "nodemon": "^3.1.11",
+    "prisma": "^7.1.0",
+    "ts-jest": "^29.4.6",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "tsx": "^4.21.0",
+    "typescript": "^5.9.3"
+  }
+}

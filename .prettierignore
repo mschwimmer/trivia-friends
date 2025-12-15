@@ -1,0 +1,22 @@
+# Dependencies
+node_modules
+.yarn
+
+# Build outputs
+dist
+build
+.next
+out
+
+# Prisma generated files
+**/generated
+
+# Lock files
+yarn.lock
+package-lock.json
+
+# Logs
+*.log
+
+# Coverage
+coverage
