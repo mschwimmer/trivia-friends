@@ -13,32 +13,174 @@ datasource db {
   provider = "postgresql"
 }
 
-model User {
-  id Int @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  email String @unique
-  username String
-  firebaseUid String @unique
-  provider String?
-  boards TriviaBoard[]
-  questions Question[]
+enum AuthProvider {
+  GOOGLE
+  // add more later if needed
 }
 
-model TriviaBoard {
-  id Int @id @default(autoincrement())
+model User {
+  id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  author User? @relation(fields: [authorId], references: [id])
-  authorId Int? 
+
+  displayName String?
+
+  // Auth identity (Firebase Auth / Google)
+  authProvider AuthProvider
+  providerUid  String // Firebase UID or provider subject
+  email        String?
+
+  boards Board[]
+
+  // A user can have multiple game sessions
+  gameSessions GameSession[]
+
+  @@unique([authProvider, providerUid])
 }
 
 model Question {
-  id Int @id @default(autoincrement())
+  id        String   @id @default(cuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  author User? @relation(fields: [authorId], references: [id])
-  authorId Int?
-  question String
+
+  prompt String
   answer String
+
+  boardClues BoardClue[]
+}
+
+model Board {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  ownerId String
+  owner   User   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  title       String
+  description String?
+
+  isPublic Boolean @default(true)
+
+  // Exactly one Daily Double per board, chosen by creator.
+  // Stored as a pointer to a specific BoardClue (slot).
+  dailyDoubleClue   BoardClue? @relation("BoardDailyDouble", fields: [dailyDoubleClueId], references: [id], onDelete: SetNull)
+  dailyDoubleClueId String?    @unique
+
+  categories BoardCategory[]
+  clues      BoardClue[]     @relation("BoardClues")
+  sessions   GameSession[]
+}
+
+model BoardCategory {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  boardId String
+  board   Board  @relation(fields: [boardId], references: [id], onDelete: Cascade)
+
+  // 0-based column index in the UI grid (supports >5 categories)
+  colIndex Int
+
+  title String
+
+  @@unique([boardId, colIndex])
+}
+
+model BoardClue {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  boardId String
+  board   Board  @relation("BoardClues", fields: [boardId], references: [id], onDelete: Cascade)
+
+  // Position in grid:
+  // - colIndex maps to BoardCategory.colIndex
+  // - rowIndex is 0..N-1 (supports >5 clues)
+  colIndex Int
+  rowIndex Int
+
+  value Int
+
+  questionId String
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Restrict)
+
+  // convenience flag (kept consistent with Board.dailyDoubleClueId in app logic)
+  isDailyDouble       Boolean @default(false)
+  // If this clue is selected as the Daily Double for a board
+  dailyDoubleForBoard Board?  @relation("BoardDailyDouble")
+
+  // A board clue can belong to multiple session clues
+  sessionClues SessionClue[]
+
+  @@unique([boardId, colIndex, rowIndex])
+  @@index([questionId])
+}
+
+model GameSession {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  boardId String
+  board   Board  @relation(fields: [boardId], references: [id], onDelete: Restrict)
+
+  // Host can be a logged-in user, but allow null so guests can start sessions.
+  hostUserId String?
+  hostUser   User?   @relation(fields: [hostUserId], references: [id], onDelete: SetNull)
+
+  title String?
+
+  players SessionPlayer[]
+  clues   SessionClue[]
+
+  @@index([boardId])
+  @@index([hostUserId])
+}
+
+model SessionPlayer {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sessionId String
+  session   GameSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  name  String
+  score Int    @default(0)
+
+  @@index([sessionId])
+}
+
+model SessionClue {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  sessionId String
+  session   GameSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  // Reference back to the template slot (nice for debugging),
+  // but snapshot data below is authoritative for gameplay.
+  boardClueId String?
+  boardClue   BoardClue? @relation(fields: [boardClueId], references: [id], onDelete: SetNull)
+
+  // Snapshot of position + display
+  colIndex      Int
+  rowIndex      Int
+  value         Int
+  categoryTitle String
+
+  // Snapshot of the question content at start (so edits won't affect sessions)
+  prompt String
+  answer String
+
+  isDailyDouble Boolean @default(false)
+
+  opened Boolean @default(false)
+
+  @@unique([sessionId, colIndex, rowIndex])
+  @@index([sessionId])
 }
