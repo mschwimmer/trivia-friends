@@ -7665,6 +7665,7 @@ __metadata:
     eslint-plugin-react: "npm:^7.37.5"
     eslint-plugin-react-hooks: "npm:^7.0.1"
     prettier: "npm:^3.7.4"
+    typescript: "npm:^5.9.3"
   languageName: unknown
   linkType: soft
 

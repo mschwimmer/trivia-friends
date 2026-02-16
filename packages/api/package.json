@@ -3,8 +3,8 @@
   "type": "module",
   "scripts": {
     "compile": "tsc",
-    "start": "yarn run compile && node ./dist/index.js",
-    "dev": "ts-node-dev src/index.ts",
+    "start": "yarn compile && node ./dist/index.js",
+    "dev": "tsx src/index.ts",
     "type-check": "tsc --noEmit",
     "test": "jest",
     "test:watch": "jest --watch",

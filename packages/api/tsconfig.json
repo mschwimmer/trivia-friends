@@ -1,18 +1,9 @@
 {
+  "extends": "../../tsconfig.base.config.json",
   "compilerOptions": {
     "rootDirs": ["src"],
     "outDir": "./dist",
     "lib": ["es2023"],
-    "target": "es2023",
-    "module": "node16",
-    "moduleResolution": "node16",
-
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "resolveJsonModule": true,
-
     "declaration": true,
     "sourceMap": true,
     "allowSyntheticDefaultImports": true,

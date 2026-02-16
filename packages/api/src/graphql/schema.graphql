@@ -1,0 +1,109 @@
+enum AuthProvider {
+  GOOGLE
+}
+
+scalar Date
+
+type User {
+  id: String
+  createdAt: Date
+  updatedAt: Date
+  displayName: String
+  authProvider: AuthProvider
+  providerUid: String
+  email: String
+  boards: [Board]
+  gameSessions: [GameSession]
+}
+
+type Question {
+  id: String
+  createdAt: Date
+  updatedAt: Date
+  prompt: String
+  answer: String
+  boardClues: [BoardClue]
+}
+
+type Board {
+  id: String
+  createdAt: Date
+  updatedAt: Date
+  ownerId: String
+  owner: User
+  title: String
+  description: String
+  isPublic: Boolean
+  dailyDoubleClue: BoardClue
+  dailyDoubleClueId: String
+  categories: [BoardCategory]
+  clues: [BoardClue]
+  sessions: [GameSession]
+}
+
+type BoardCategory {
+    id: String
+    createdAt:
+    updatedAt:
+    boardId: String
+    board: Board
+    colIndex: Int
+    title: String
+}
+
+type BoardClue {
+    id: String
+    cratedAt:
+    updatedAt:
+    boardId: String
+    board: Board
+    colIndex: Int
+    rowIndex: Int
+    value: Int
+    questionId: String
+    question: Question
+    isDailyDouble: Boolean
+    dailyDoubleForBoard: Board
+    sessionClues: [SessionClue]
+}
+
+type GameSession {
+    id: String
+    createdAt:
+    updatedAt: 
+    boardId: String
+    board: Board
+    hostUserId: String
+    hostUser: User
+    title: String
+    players: [SessionPlayer]
+    clues: [SessionClue]
+}
+
+type SessionPlayer {
+    id: String
+    createdAt: 
+    updatedAt: 
+    sessionId: String
+    session: GameSession
+    name: String
+    score: Int
+}
+
+type SessionClue {
+    id: String
+    createdAt: 
+    updatedAt: 
+    sessionId: String
+    session: GameSession
+    boardClueId: String
+    boardClue: BoardClue
+    colIndex: Int
+    rowIndex: Int
+    value: Int
+    categoryTitle: String
+    prompt: String
+    answer: String
+    isDailyDouble: Boolean
+    opened: Boolean
+}

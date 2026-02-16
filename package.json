@@ -2,6 +2,10 @@
   "name": "trivia-friends",
   "packageManager": "yarn@4.12.0",
   "private": true,
+  "engines": {
+    "node": ">=20",
+    "yarn": ">=4"
+  },
   "workspaces": [
     "packages/*"
   ],
@@ -22,6 +26,7 @@
     "eslint-plugin-prettier": "^5.5.4",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.0.1",
-    "prettier": "^3.7.4"
+    "prettier": "^3.7.4",
+    "typescript": "^5.9.3"
   }
 }
