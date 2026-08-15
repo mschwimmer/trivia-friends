@@ -3,20 +3,26 @@
   "packageManager": "yarn@4.12.0",
   "private": true,
   "engines": {
-    "node": ">=20",
+    "node": "^20.19.0 || ^22.12.0 || ^24.0.0",
     "yarn": ">=4"
   },
   "workspaces": [
     "packages/*"
   ],
   "scripts": {
-    "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
-    "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
-    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\"",
-    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md}\"",
-    "type-check": "yarn workspaces foreach -pt run type-check"
+    "dev": "yarn workspaces foreach -A -p -i run dev",
+    "dev:api": "yarn workspace api dev",
+    "dev:web": "yarn workspace web dev",
+    "build": "yarn workspaces foreach -A -pt run build",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,css,graphql}\" && yarn workspace api prisma:format",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,css,graphql}\"",
+    "type-check": "yarn workspaces foreach -A -pt run type-check",
+    "test": "yarn workspaces foreach -A -pt run test"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.2",
     "@typescript-eslint/eslint-plugin": "^8.49.0",
     "@typescript-eslint/parser": "^8.49.0",
     "eslint": "^9.39.2",
@@ -26,6 +32,7 @@
     "eslint-plugin-prettier": "^5.5.4",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.0.1",
+    "globals": "^14.0.0",
     "prettier": "^3.7.4",
     "typescript": "^5.9.3"
   }

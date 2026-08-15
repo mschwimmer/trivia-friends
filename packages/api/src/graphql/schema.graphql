@@ -2,108 +2,112 @@ enum AuthProvider {
   GOOGLE
 }
 
-scalar Date
+scalar DateTime
 
 type User {
-  id: String
-  createdAt: Date
-  updatedAt: Date
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
   displayName: String
-  authProvider: AuthProvider
-  providerUid: String
+  authProvider: AuthProvider!
+  providerUid: String!
   email: String
-  boards: [Board]
-  gameSessions: [GameSession]
+  boards: [Board!]!
+  gameSessions: [GameSession!]!
 }
 
 type Question {
-  id: String
-  createdAt: Date
-  updatedAt: Date
-  prompt: String
-  answer: String
-  boardClues: [BoardClue]
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  prompt: String!
+  answer: String!
+  boardClues: [BoardClue!]!
 }
 
 type Board {
-  id: String
-  createdAt: Date
-  updatedAt: Date
-  ownerId: String
-  owner: User
-  title: String
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  ownerId: ID!
+  owner: User!
+  title: String!
   description: String
-  isPublic: Boolean
+  isPublic: Boolean!
   dailyDoubleClue: BoardClue
-  dailyDoubleClueId: String
-  categories: [BoardCategory]
-  clues: [BoardClue]
-  sessions: [GameSession]
+  dailyDoubleClueId: ID
+  categories: [BoardCategory!]!
+  clues: [BoardClue!]!
+  sessions: [GameSession!]!
 }
 
 type BoardCategory {
-    id: String
-    createdAt:
-    updatedAt:
-    boardId: String
-    board: Board
-    colIndex: Int
-    title: String
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  boardId: ID!
+  board: Board!
+  colIndex: Int!
+  title: String!
 }
 
 type BoardClue {
-    id: String
-    cratedAt:
-    updatedAt:
-    boardId: String
-    board: Board
-    colIndex: Int
-    rowIndex: Int
-    value: Int
-    questionId: String
-    question: Question
-    isDailyDouble: Boolean
-    dailyDoubleForBoard: Board
-    sessionClues: [SessionClue]
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  boardId: ID!
+  board: Board!
+  colIndex: Int!
+  rowIndex: Int!
+  value: Int!
+  questionId: ID!
+  question: Question!
+  isDailyDouble: Boolean!
+  dailyDoubleForBoard: Board
+  sessionClues: [SessionClue!]!
 }
 
 type GameSession {
-    id: String
-    createdAt:
-    updatedAt: 
-    boardId: String
-    board: Board
-    hostUserId: String
-    hostUser: User
-    title: String
-    players: [SessionPlayer]
-    clues: [SessionClue]
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  boardId: ID!
+  board: Board!
+  hostUserId: ID
+  hostUser: User
+  title: String
+  players: [SessionPlayer!]!
+  clues: [SessionClue!]!
 }
 
 type SessionPlayer {
-    id: String
-    createdAt: 
-    updatedAt: 
-    sessionId: String
-    session: GameSession
-    name: String
-    score: Int
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  sessionId: ID!
+  session: GameSession!
+  name: String!
+  score: Int!
 }
 
 type SessionClue {
-    id: String
-    createdAt: 
-    updatedAt: 
-    sessionId: String
-    session: GameSession
-    boardClueId: String
-    boardClue: BoardClue
-    colIndex: Int
-    rowIndex: Int
-    value: Int
-    categoryTitle: String
-    prompt: String
-    answer: String
-    isDailyDouble: Boolean
-    opened: Boolean
+  id: ID!
+  createdAt: DateTime!
+  updatedAt: DateTime!
+  sessionId: ID!
+  session: GameSession!
+  boardClueId: ID
+  boardClue: BoardClue
+  colIndex: Int!
+  rowIndex: Int!
+  value: Int!
+  categoryTitle: String!
+  prompt: String!
+  answer: String!
+  isDailyDouble: Boolean!
+  opened: Boolean!
+}
+
+type Query {
+  health: String!
 }

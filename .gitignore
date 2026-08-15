@@ -55,5 +55,13 @@ docker-data/
 ### macOS ###
 .DS_Store
 .AppleDouble
-.LSOverridepackage-lock.json
+.LSOverride
+package-lock.json
 project-brief.md
+
+## vscode ##
+.vscode/
+
+### Personal planning and agent notes ###
+/TODO.md
+/docs/

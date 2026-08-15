@@ -6,8 +6,9 @@
     "lib": ["es2023"],
     "declaration": true,
     "sourceMap": true,
+    "isolatedModules": true,
     "allowSyntheticDefaultImports": true,
-    "types": ["node", "jest"]
+    "types": ["node"]
   },
   "include": ["src/**/*", "prisma/**/*"],
   "exclude": ["node_modules", "dist", "**/*.test.ts"]

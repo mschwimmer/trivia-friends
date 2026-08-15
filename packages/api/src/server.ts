@@ -1,29 +1,27 @@
-// look into apollo server basics for graphql
-
 import { ApolloServer } from '@apollo/server';
+import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
 import { expressMiddleware } from '@as-integrations/express5';
-import express from 'express';
-import http from 'http';
 import cors from 'cors';
-import bodyParser from 'body-parser';
-import createContext from './context';
-import { typeDefs, resolvers } from './graphql/schema.js';
+import express from 'express';
+import http from 'node:http';
+import createContext from './context.js';
+import { resolvers, typeDefs } from './graphql/schema.js';
 
-export type startServerOptions = {
+export type StartServerOptions = {
   port?: number;
   host?: string;
 };
 
-export async function startServer(options: startServerOptions = {}) {
+export async function startServer(options: StartServerOptions = {}) {
   const port = options.port ?? Number(process.env.PORT ?? 4000);
   const host = options.host ?? process.env.HOST ?? '0.0.0.0';
 
   const app = express();
   const httpServer = http.createServer(app);
-
   const apollo = new ApolloServer({
     typeDefs,
     resolvers,
+    plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
   });
 
   await apollo.start();
@@ -34,10 +32,28 @@ export async function startServer(options: startServerOptions = {}) {
 
   app.use(
     '/graphql',
-    cors(),
-    bodyParser.json(),
+    cors({
+      origin: process.env.WEB_ORIGIN ?? 'http://localhost:3000',
+    }),
+    express.json(),
     expressMiddleware(apollo, {
       context: async ({ req }) => createContext({ req }),
     })
   );
+
+  await new Promise<void>((resolve, reject) => {
+    httpServer.once('error', reject);
+    httpServer.listen({ port, host }, () => {
+      httpServer.off('error', reject);
+      resolve();
+    });
+  });
+
+  return {
+    app,
+    apollo,
+    httpServer,
+    url: `http://${host}:${port}`,
+    stop: async () => apollo.stop(),
+  };
 }
