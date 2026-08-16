@@ -19,10 +19,16 @@
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md,css,graphql}\" && yarn workspace api prisma:format",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,json,md,css,graphql}\"",
     "type-check": "yarn workspaces foreach -A -pt run type-check",
-    "test": "yarn workspaces foreach -A -pt run test"
+    "test": "jest",
+    "test:api": "jest --selectProjects api",
+    "test:web": "jest --selectProjects web --passWithNoTests",
+    "test:shared": "jest --selectProjects shared --passWithNoTests",
+    "test:watch": "jest --watch"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^26.2.0",
     "@typescript-eslint/eslint-plugin": "^8.49.0",
     "@typescript-eslint/parser": "^8.49.0",
     "eslint": "^9.39.2",
@@ -33,7 +39,10 @@
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.0.1",
     "globals": "^14.0.0",
+    "jest": "^30.4.2",
     "prettier": "^3.7.4",
+    "ts-jest": "^29.4.12",
+    "ts-node": "^10.9.2",
     "typescript": "^5.9.3"
   }
 }

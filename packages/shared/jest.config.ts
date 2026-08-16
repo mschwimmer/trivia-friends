@@ -1,7 +1,7 @@
 import type { Config } from 'jest';
 
 const config: Config = {
-  displayName: 'api',
+  displayName: 'shared',
   testEnvironment: 'node',
   transform: {
     '^.+\\.tsx?$': [

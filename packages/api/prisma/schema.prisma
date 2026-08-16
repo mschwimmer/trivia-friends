@@ -30,7 +30,8 @@ model User {
   providerUid  String // Firebase UID or provider subject
   email        String?
 
-  boards Board[]
+  boards    Board[]
+  questions Question[]
 
   // A user can have multiple game sessions
   gameSessions GameSession[]
@@ -46,7 +47,12 @@ model Question {
   prompt String
   answer String
 
+  creatorId String
+  creator   User   @relation(fields: [creatorId], references: [id], onDelete: Restrict)
+
   boardClues BoardClue[]
+
+  @@index([creatorId])
 }
 
 model Board {
@@ -62,14 +68,17 @@ model Board {
 
   isPublic Boolean @default(true)
 
-  // Exactly one Daily Double per board, chosen by creator.
-  // Stored as a pointer to a specific BoardClue (slot).
+  // The single source of truth for the board's Daily Double. It may be null while
+  // the board is being edited, but must reference one of this board's clues before play.
   dailyDoubleClue   BoardClue? @relation("BoardDailyDouble", fields: [dailyDoubleClueId], references: [id], onDelete: SetNull)
   dailyDoubleClueId String?    @unique
 
   categories BoardCategory[]
   clues      BoardClue[]     @relation("BoardClues")
   sessions   GameSession[]
+
+  @@index([ownerId])
+  @@index([isPublic, createdAt])
 }
 
 model BoardCategory {
@@ -84,6 +93,7 @@ model BoardCategory {
   colIndex Int
 
   title String
+  clues BoardClue[]
 
   @@unique([boardId, colIndex])
 }
@@ -101,16 +111,15 @@ model BoardClue {
   // - rowIndex is 0..N-1 (supports >5 clues)
   colIndex Int
   rowIndex Int
+  category BoardCategory @relation(fields: [boardId, colIndex], references: [boardId, colIndex], onDelete: Cascade)
 
   value Int
 
   questionId String
   question   Question @relation(fields: [questionId], references: [id], onDelete: Restrict)
 
-  // convenience flag (kept consistent with Board.dailyDoubleClueId in app logic)
-  isDailyDouble       Boolean @default(false)
-  // If this clue is selected as the Daily Double for a board
-  dailyDoubleForBoard Board?  @relation("BoardDailyDouble")
+  // Inverse side of Board.dailyDoubleClue; not a second source of truth.
+  dailyDoubleForBoard Board? @relation("BoardDailyDouble")
 
   // A board clue can belong to multiple session clues
   sessionClues SessionClue[]
@@ -124,8 +133,9 @@ model GameSession {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  boardId String
-  board   Board  @relation(fields: [boardId], references: [id], onDelete: Restrict)
+  // Sessions contain a full snapshot, so deleting the source board preserves play.
+  boardId String?
+  board   Board?  @relation(fields: [boardId], references: [id], onDelete: SetNull)
 
   // Host can be a logged-in user, but allow null so guests can start sessions.
   hostUserId String?
@@ -148,10 +158,12 @@ model SessionPlayer {
   sessionId String
   session   GameSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
 
-  name  String
-  score Int    @default(0)
+  position Int
+  name     String
+  score    Int    @default(0)
 
-  @@index([sessionId])
+  @@unique([sessionId, position])
+  @@index([sessionId, name])
 }
 
 model SessionClue {

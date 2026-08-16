@@ -45,11 +45,15 @@ docker compose up -d postgres
 yarn workspace api prisma:migrate
 ```
 
-Optionally load demo data once `packages/api/prisma/seed.ts` contains a v1 seed:
+Optionally load the repeatable v1 demo seed:
 
 ```sh
 yarn workspace api prisma:seed
 ```
+
+The seed creates one demo owner, a complete public 5×5 board, a small private
+board, 25 questions, and one Daily Double per board. The private board reuses a
+question from the public board.
 
 ## Development
 
@@ -70,6 +74,26 @@ The web app runs at [http://localhost:3000](http://localhost:3000), GraphQL runs
 at [http://localhost:4000/graphql](http://localhost:4000/graphql), and the API
 health endpoint is [http://localhost:4000/healthz](http://localhost:4000/healthz).
 The home page reports whether Apollo Client can reach the GraphQL `health` query.
+
+## V1 data model rules
+
+- Boards and questions have one owner/creator. Only that user may modify them,
+  and v1 question reuse is limited to the question creator.
+- Public boards are visible to everyone; private boards are visible only to their
+  owner.
+- `Board.dailyDoubleClueId` is the sole Daily Double source of truth. It may be
+  empty while editing, but a playable board must have a category, a clue, and a
+  Daily Double that points to one of its own clues.
+- Categories sort by `colIndex`, clues by `colIndex` then `rowIndex`, players by
+  `position`, and sessions by newest first. Reusable query ordering constants are
+  in `packages/api/src/domain/ordering.ts`.
+- Deleting a board cascades through its categories and template clues while
+  preserving already-snapshotted sessions. Questions in use by clues cannot be
+  deleted.
+
+The reusable access and playability checks live in
+`packages/api/src/domain/board-policy.ts` and must be called by board, question,
+and session resolvers as those operations are added.
 
 ## Database commands
 
@@ -96,8 +120,24 @@ yarn test
 yarn build
 ```
 
-The production API build generates Prisma Client, compiles TypeScript, and copies
-the GraphQL schema into `dist`. The web build uses `NEXT_PUBLIC_API_URL` as its
+Jest runs from the repository root and delegates to separate `api`, `web`, and
+`shared` projects:
+
+```sh
+yarn test:api
+yarn test:web
+yarn test:shared
+yarn test:watch
+```
+
+The API and shared projects use a Node test environment. The web project uses
+Next.js's Jest transformer, jsdom, and React Testing Library. Each package's main
+TypeScript configuration includes Jest globals so test files receive editor and
+type-check support in VS Code.
+
+The production API build generates Prisma Client, compiles with
+`packages/api/tsconfig.build.json` so test files are not emitted, and copies the
+GraphQL schema into `dist`. The web build uses `NEXT_PUBLIC_API_URL` as its
 GraphQL endpoint.
 
 ## Environment variables

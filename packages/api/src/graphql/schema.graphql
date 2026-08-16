@@ -13,6 +13,7 @@ type User {
   providerUid: String!
   email: String
   boards: [Board!]!
+  questions: [Question!]!
   gameSessions: [GameSession!]!
 }
 
@@ -22,6 +23,8 @@ type Question {
   updatedAt: DateTime!
   prompt: String!
   answer: String!
+  creatorId: ID!
+  creator: User!
   boardClues: [BoardClue!]!
 }
 
@@ -49,6 +52,7 @@ type BoardCategory {
   board: Board!
   colIndex: Int!
   title: String!
+  clues: [BoardClue!]!
 }
 
 type BoardClue {
@@ -59,10 +63,10 @@ type BoardClue {
   board: Board!
   colIndex: Int!
   rowIndex: Int!
+  category: BoardCategory!
   value: Int!
   questionId: ID!
   question: Question!
-  isDailyDouble: Boolean!
   dailyDoubleForBoard: Board
   sessionClues: [SessionClue!]!
 }
@@ -71,8 +75,8 @@ type GameSession {
   id: ID!
   createdAt: DateTime!
   updatedAt: DateTime!
-  boardId: ID!
-  board: Board!
+  boardId: ID
+  board: Board
   hostUserId: ID
   hostUser: User
   title: String
@@ -86,6 +90,7 @@ type SessionPlayer {
   updatedAt: DateTime!
   sessionId: ID!
   session: GameSession!
+  position: Int!
   name: String!
   score: Int!
 }

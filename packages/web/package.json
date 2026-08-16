@@ -16,9 +16,13 @@
     "rxjs": "^7.8.2"
   },
   "devDependencies": {
+    "@testing-library/dom": "^10.4.1",
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.2",
     "@types/node": "^24.0.0",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "jest-environment-jsdom": "^30.4.1",
     "typescript": "^5.9.3"
   }
 }

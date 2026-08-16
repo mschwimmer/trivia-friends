@@ -2,42 +2,53 @@
 
 GraphQL API service built with Node.js, TypeScript, Apollo Server, and Prisma (PostgreSQL).
 
-# Development
+Run commands below from the repository root.
 
-```
-yarn dev
-```
+## Development
 
-Runs API in watch mode using ts-node-dev
-
-# Build and Run
-
-```
-yarn start
+```sh
+yarn dev:api
 ```
 
-Compiles TypeScript and runs the built server from /dist (subject to change)
+This runs the API in watch mode with `tsx`.
 
-# Testing
+## Build and run
 
+```sh
+yarn workspace api start
 ```
-yarn test
+
+The production build uses `tsconfig.build.json`, which excludes `*.test.ts`, and
+runs the compiled server from `dist`.
+
+## Testing
+
+```sh
+yarn test:api
 yarn test:watch
 ```
 
-# Type Checking
+The root Jest runner selects the API's Node-based Jest project. The main API
+`tsconfig.json` includes Jest globals and test files, so `describe`, `it`, and
+`expect` are recognized by VS Code and checked by TypeScript.
 
-```
-yarn type-check
-```
+## Type checking
 
-# Prisma
-
-```
-yarn prisma:generate    # generate Prisma client
-yarn prisma:migrate     # run migrations
-yarn prisma:studio      # open Prisma studio
-yarn prisma:seed        # seed the database
+```sh
+yarn workspace api type-check
 ```
 
-To add something new, edit the schema, then run yarn prisma:migrate dev.
+This checks both production source and TypeScript test files without emitting
+JavaScript.
+
+## Prisma
+
+```sh
+yarn workspace api prisma:generate
+yarn workspace api prisma:migrate
+yarn workspace api prisma:studio
+yarn workspace api prisma:seed
+```
+
+To change the data model, edit `prisma/schema.prisma` and create a migration with
+`yarn workspace api prisma:migrate`.
