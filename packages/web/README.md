@@ -2,6 +2,11 @@
 
 Next.js App Router frontend using React and Apollo Client.
 
+Set the four `NEXT_PUBLIC_FIREBASE_*` values from your Firebase web app in
+`.env.local`. Google sign-in state is provided to the app by `AuthProvider`, and
+Apollo Client attaches the current Firebase ID token to GraphQL requests. The
+Apollo cache is cleared whenever the signed-in Firebase user changes.
+
 Run development commands from the repository root:
 
 ```sh
