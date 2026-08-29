@@ -41,6 +41,14 @@ yarn workspace api type-check
 This checks both production source and TypeScript test files without emitting
 JavaScript.
 
+## Authentication
+
+Set `FIREBASE_PROJECT_ID` in `packages/api/.env`. The API verifies Firebase ID
+tokens from `Authorization: Bearer <token>`, makes the corresponding local user
+available as `context.currentUser`, and creates or updates that user on the first
+authenticated request. Verification does not require a checked-in service-account
+private key.
+
 ## Prisma
 
 ```sh

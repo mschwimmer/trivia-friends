@@ -35,8 +35,8 @@ cp packages/api/.env.example packages/api/.env
 cp packages/web/.env.example packages/web/.env.local
 ```
 
-The checked-in examples contain development-safe defaults. Firebase values may
-remain empty until authentication work begins.
+The checked-in examples contain development-safe defaults. Fill in the Firebase
+web app values and project ID before testing sign-in.
 
 Start Postgres and apply the existing migrations:
 
@@ -74,6 +74,21 @@ The web app runs at [http://localhost:3000](http://localhost:3000), GraphQL runs
 at [http://localhost:4000/graphql](http://localhost:4000/graphql), and the API
 health endpoint is [http://localhost:4000/healthz](http://localhost:4000/healthz).
 The home page reports whether Apollo Client can reach the GraphQL `health` query.
+
+## Authentication
+
+The web app signs users in with Google through Firebase Authentication. Apollo
+Client sends the current Firebase ID token as a bearer token; the API verifies
+it against `FIREBASE_PROJECT_ID` and upserts the matching local user. Firebase's
+UID and email remain private API data, while the user chooses a separate public
+display name.
+
+For local setup, enable Google as a Firebase Authentication provider and add
+`localhost` as an authorized domain. Copy the Firebase web app values into
+`packages/web/.env.local` and set the matching project ID in
+`packages/api/.env`. Token verification only uses the project ID and Firebase's
+public signing certificates, so no service-account private key is stored in this
+repository.
 
 ## V1 data model rules
 

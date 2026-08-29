@@ -1,7 +1,3 @@
-enum AuthProvider {
-  GOOGLE
-}
-
 scalar DateTime
 
 type User {
@@ -9,12 +5,6 @@ type User {
   createdAt: DateTime!
   updatedAt: DateTime!
   displayName: String
-  authProvider: AuthProvider!
-  providerUid: String!
-  email: String
-  boards: [Board!]!
-  questions: [Question!]!
-  gameSessions: [GameSession!]!
 }
 
 type Question {
@@ -115,4 +105,9 @@ type SessionClue {
 
 type Query {
   health: String!
+  me: User
+}
+
+type Mutation {
+  updateDisplayName(displayName: String!): User!
 }

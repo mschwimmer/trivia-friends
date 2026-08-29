@@ -1,4 +1,5 @@
 import { ApiHealth } from '@/components/api-health';
+import { AccountPanel } from '@/components/account-panel';
 
 export default function HomePage() {
   return (
@@ -21,6 +22,7 @@ export default function HomePage() {
         </p>
 
         <ApiHealth />
+        <AccountPanel />
       </section>
     </main>
   );
