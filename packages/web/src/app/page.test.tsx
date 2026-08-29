@@ -15,7 +15,7 @@ describe('HomePage', () => {
 
     expect(
       screen.getByRole('heading', {
-        name: 'A trivia night built for the friends already on your couch.',
+        name: 'Legally distinct jeopardy game with friends',
       })
     ).toBeInTheDocument();
     expect(screen.getByText('API status')).toBeInTheDocument();

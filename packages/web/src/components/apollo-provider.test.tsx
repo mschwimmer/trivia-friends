@@ -18,11 +18,11 @@ jest.mock('@/lib/firebase', () => ({
 
 const mockedUseApolloClient = jest.mocked(useApolloClient);
 const mockedUseAuth = jest.mocked(useAuth);
-const clearStore = jest.fn().mockResolvedValue(undefined);
+const resetStore = jest.fn().mockResolvedValue(undefined);
 
 beforeEach(() => {
-  clearStore.mockClear();
-  mockedUseApolloClient.mockReturnValue({ clearStore } as never);
+  resetStore.mockClear();
+  mockedUseApolloClient.mockReturnValue({ resetStore } as never);
   mockedUseAuth.mockReturnValue({ user: null } as never);
 });
 
@@ -30,7 +30,7 @@ describe('ClearApolloStoreWhenUserChanges', () => {
   it('does not clear in-flight queries on initial mount', () => {
     render(<ClearApolloStoreWhenUserChanges />);
 
-    expect(clearStore).not.toHaveBeenCalled();
+    expect(resetStore).not.toHaveBeenCalled();
   });
 
   it('clears cached user data after the authenticated user changes', () => {
@@ -39,6 +39,6 @@ describe('ClearApolloStoreWhenUserChanges', () => {
     mockedUseAuth.mockReturnValue({ user: { uid: 'firebase-user' } } as never);
     rerender(<ClearApolloStoreWhenUserChanges />);
 
-    expect(clearStore).toHaveBeenCalledTimes(1);
+    expect(resetStore).toHaveBeenCalledTimes(1);
   });
 });
