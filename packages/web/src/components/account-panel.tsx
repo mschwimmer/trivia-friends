@@ -90,6 +90,8 @@ export function AccountPanel() {
   const hasDisplayName = Boolean(data?.me?.displayName);
   const showDisplayNameForm = !profileLoading && (!hasDisplayName || editing);
 
+  if (profileError) console.log('profileError', profileError);
+
   return (
     <section className="account-panel" aria-labelledby="account-heading">
       <div className="account-summary">

@@ -13,9 +13,10 @@ export default function HomePage() {
 
       <section className="hero">
         <p className="eyebrow">
-          Your room. Your questions. Fastest finger wins.
+          Exciting words that make you release dopamine so you&apos;re hooked on
+          my product
         </p>
-        <h1>A trivia night built for the friends already on your couch.</h1>
+        <h1>Legally distinct jeopardy game with friends</h1>
         <p className="lede">
           Create Jeopardy-style boards, keep score, and let everyone buzz in
           from their phone.

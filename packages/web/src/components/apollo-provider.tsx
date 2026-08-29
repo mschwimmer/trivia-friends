@@ -12,16 +12,22 @@ import {
   useApolloClient,
 } from '@apollo/client/react';
 import type { ReactNode } from 'react';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { getFirebaseAuth } from '@/lib/firebase';
 import { useAuth } from './auth-provider';
 
-function ClearApolloStoreWhenUserChanges() {
+export function ClearApolloStoreWhenUserChanges() {
   const client = useApolloClient();
   const { user } = useAuth();
+  const previousUserUid = useRef(user?.uid);
 
   useEffect(() => {
-    void client.clearStore();
+    if (previousUserUid.current === user?.uid) {
+      return;
+    }
+
+    previousUserUid.current = user?.uid;
+    void client.resetStore();
   }, [client, user?.uid]);
 
   return null;
