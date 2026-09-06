@@ -1,4 +1,3 @@
-import { GraphQLError } from 'graphql';
 import {
   parseBearerToken,
   resolveRequestIdentity,
@@ -30,7 +29,9 @@ describe('request identity', () => {
   });
 
   it('rejects malformed and invalid credentials as unauthenticated', async () => {
-    expect(() => parseBearerToken('Basic abc')).toThrow(GraphQLError);
+    expect(() => parseBearerToken('Basic abc')).toThrow(
+      expect.objectContaining({ code: 'UNAUTHENTICATED' })
+    );
 
     await expect(
       resolveRequestIdentity({
@@ -38,9 +39,7 @@ describe('request identity', () => {
         prismaClient: prismaClientWithUpsert(),
         verifyIdToken: jest.fn().mockRejectedValue(new Error('expired')),
       })
-    ).rejects.toMatchObject({
-      extensions: { code: 'UNAUTHENTICATED' },
-    });
+    ).rejects.toMatchObject({ code: 'UNAUTHENTICATED' });
   });
 
   it('upserts the local Google user after verifying the Firebase token', async () => {

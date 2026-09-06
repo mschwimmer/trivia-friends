@@ -1,10 +1,10 @@
 import type { Request } from 'express';
-import type { User } from './generated/prisma/client.js';
+import type { User } from '../generated/prisma/client.js';
 import {
   resolveRequestIdentity,
   type VerifyIdToken,
-} from './auth/request-identity.js';
-import { prisma } from './lib/prisma.js';
+} from '../auth/request-identity.js';
+import { prisma } from '../db/prisma.js';
 
 export type Context = {
   prisma: typeof prisma;

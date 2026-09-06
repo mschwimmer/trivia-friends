@@ -100,15 +100,42 @@ repository.
   empty while editing, but a playable board must have a category, a clue, and a
   Daily Double that points to one of its own clues.
 - Categories sort by `colIndex`, clues by `colIndex` then `rowIndex`, players by
-  `position`, and sessions by newest first. Reusable query ordering constants are
-  in `packages/api/src/domain/ordering.ts`.
+  `position`, and sessions by newest first. Ordering constants live with their
+  feature under `packages/api/src/modules`.
 - Deleting a board cascades through its categories and template clues while
   preserving already-snapshotted sessions. Questions in use by clues cannot be
   deleted.
 
-The reusable access and playability checks live in
-`packages/api/src/domain/board-policy.ts` and must be called by board, question,
-and session resolvers as those operations are added.
+Reusable access and playability checks live with the board, question, and session
+modules under `packages/api/src/modules`. Transport-independent services enforce
+those policies before accessing Prisma.
+
+## API architecture
+
+The API keeps transport code separate from application behavior. GraphQL schema,
+context, error formatting, and thin resolver adapters live in
+`packages/api/src/graphql`; feature workflows and policies live in
+`packages/api/src/modules`; shared validation, authorization, service context,
+and application errors live in `packages/api/src/application`; and Prisma setup
+lives in `packages/api/src/db`.
+
+This boundary matters for the remaining v1 scope: board and session behavior can
+be reused by the future local WebSocket buzzer without calling GraphQL resolvers
+or importing Apollo-specific errors. See `packages/api/README.md` for the full
+directory map and placement rules.
+
+## GraphQL API behavior
+
+Public-board lists are limited to 50 results per request. Public board detail
+contains the preview grid but withholds question content and Daily Double
+placement from non-owners. Authenticated owners can create and fully edit boards,
+including layouts larger than 5×5 and creator-owned reusable questions.
+
+Starting a game atomically snapshots all playable board content. Signed-in hosts
+resume with their account identity; guest hosts receive a one-time control token
+whose hash is stored in the database. Keep that raw token in browser-local
+storage and pass it to subsequent session queries and host mutations. Player
+join credentials and live buzzer state are added in the later buzzer milestone.
 
 ## Database commands
 

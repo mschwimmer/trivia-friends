@@ -4,7 +4,8 @@ import { expressMiddleware } from '@as-integrations/express5';
 import cors from 'cors';
 import express from 'express';
 import http from 'node:http';
-import createContext from './context.js';
+import createContext from './graphql/context.js';
+import { formatGraphQLError } from './graphql/errors.js';
 import { resolvers, typeDefs } from './graphql/schema.js';
 
 export type StartServerOptions = {
@@ -21,6 +22,7 @@ export async function startServer(options: StartServerOptions = {}) {
   const apollo = new ApolloServer({
     typeDefs,
     resolvers,
+    formatError: formatGraphQLError,
     plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
   });
 

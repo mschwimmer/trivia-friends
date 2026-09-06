@@ -20,4 +20,17 @@ describe('GraphQL schema', () => {
     expect(result.errors).toBeUndefined();
     expect(result.data).toEqual({ health: 'ok' });
   });
+
+  it('does not expose private provider identity fields', () => {
+    const typeDefs = readFileSync(
+      new URL('./schema.graphql', `file://${__filename}`),
+      'utf8'
+    );
+    const schema = buildSchema(typeDefs);
+    const userFields = schema.getType('User').getFields();
+
+    expect(userFields.email).toBeUndefined();
+    expect(userFields.providerUid).toBeUndefined();
+    expect(userFields.authProvider).toBeUndefined();
+  });
 });
