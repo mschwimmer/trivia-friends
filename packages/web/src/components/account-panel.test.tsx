@@ -86,5 +86,9 @@ describe('AccountPanel', () => {
     expect(
       screen.getByRole('button', { name: 'Edit display name' })
     ).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'My boards' })).toHaveAttribute(
+      'href',
+      '/boards'
+    );
   });
 });

@@ -3,6 +3,7 @@
 import { gql } from '@apollo/client';
 import { useMutation, useQuery } from '@apollo/client/react';
 import { type FormEvent, useState } from 'react';
+import Link from 'next/link';
 import { useAuth } from './auth-provider';
 
 const ME_QUERY = gql`
@@ -159,16 +160,21 @@ export function AccountPanel() {
       ) : null}
 
       {!profileLoading && hasDisplayName && !editing ? (
-        <button
-          className="text-button"
-          type="button"
-          onClick={() => {
-            setDisplayName(data?.me?.displayName ?? '');
-            setEditing(true);
-          }}
-        >
-          Edit display name
-        </button>
+        <div className="account-links">
+          <Link className="button" href="/boards">
+            My boards
+          </Link>
+          <button
+            className="text-button"
+            type="button"
+            onClick={() => {
+              setDisplayName(data?.me?.displayName ?? '');
+              setEditing(true);
+            }}
+          >
+            Edit display name
+          </button>
+        </div>
       ) : null}
     </section>
   );

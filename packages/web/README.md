@@ -13,6 +13,13 @@ clue values without receiving prompt, answer, or Daily Double content. Private
 board previews use the same route but are returned only to their signed-in owner.
 Wide boards scroll horizontally on smaller screens.
 
+Signed-in creators manage their boards at `/boards`. New boards begin with the
+default 5×5 layout and open directly in `/boards/[id]/edit`. The editor supports
+board metadata and visibility, category ordering and resizing, complete clue
+editing, creator-owned question reuse, and one explicit Daily Double selection.
+Destructive board, category, and clue actions require confirmation, and editing
+forms expose validation plus unsaved, saving, and saved states.
+
 Run development commands from the repository root:
 
 ```sh
