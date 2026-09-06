@@ -1,6 +1,6 @@
-import { GraphQLError } from 'graphql';
 import type { User } from '../generated/prisma/client.js';
-import type { prisma } from '../lib/prisma.js';
+import type { prisma } from '../db/prisma.js';
+import { unauthenticated } from '../application/errors.js';
 import type { VerifiedFirebaseIdentity } from './firebase-admin.js';
 
 async function verifyFirebaseIdToken(idToken: string) {
@@ -19,12 +19,8 @@ export type ResolveRequestIdentityOptions = {
   verifyIdToken?: VerifyIdToken;
 };
 
-export function unauthenticatedError(
-  message = 'Authentication is required.'
-): GraphQLError {
-  return new GraphQLError(message, {
-    extensions: { code: 'UNAUTHENTICATED' },
-  });
+export function unauthenticatedError(message = 'Authentication is required.') {
+  return unauthenticated(message);
 }
 
 export function parseBearerToken(

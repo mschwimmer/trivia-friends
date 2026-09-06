@@ -1,4 +1,4 @@
-import { prisma } from '../src/lib/prisma.js';
+import { prisma } from '../src/db/prisma.js';
 
 const ownerId = 'seed-user-trivia-host';
 const publicBoardId = 'seed-board-classic-trivia';

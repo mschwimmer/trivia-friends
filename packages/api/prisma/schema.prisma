@@ -141,6 +141,9 @@ model GameSession {
   hostUserId String?
   hostUser   User?   @relation(fields: [hostUserId], references: [id], onDelete: SetNull)
 
+  // Guest hosts receive the raw token once. Only its peppered hash is stored.
+  guestHostTokenHash String?
+
   title String?
 
   players SessionPlayer[]

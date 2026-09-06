@@ -1,5 +1,10 @@
 scalar DateTime
 
+enum ScoreDirection {
+  ADD
+  SUBTRACT
+}
+
 type User {
   id: ID!
   createdAt: DateTime!
@@ -15,7 +20,6 @@ type Question {
   answer: String!
   creatorId: ID!
   creator: User!
-  boardClues: [BoardClue!]!
 }
 
 type Board {
@@ -28,10 +32,8 @@ type Board {
   description: String
   isPublic: Boolean!
   dailyDoubleClue: BoardClue
-  dailyDoubleClueId: ID
   categories: [BoardCategory!]!
   clues: [BoardClue!]!
-  sessions: [GameSession!]!
 }
 
 type BoardCategory {
@@ -39,7 +41,6 @@ type BoardCategory {
   createdAt: DateTime!
   updatedAt: DateTime!
   boardId: ID!
-  board: Board!
   colIndex: Int!
   title: String!
   clues: [BoardClue!]!
@@ -50,15 +51,11 @@ type BoardClue {
   createdAt: DateTime!
   updatedAt: DateTime!
   boardId: ID!
-  board: Board!
   colIndex: Int!
   rowIndex: Int!
-  category: BoardCategory!
   value: Int!
   questionId: ID!
-  question: Question!
-  dailyDoubleForBoard: Board
-  sessionClues: [SessionClue!]!
+  question: Question
 }
 
 type GameSession {
@@ -79,7 +76,6 @@ type SessionPlayer {
   createdAt: DateTime!
   updatedAt: DateTime!
   sessionId: ID!
-  session: GameSession!
   position: Int!
   name: String!
   score: Int!
@@ -90,9 +86,7 @@ type SessionClue {
   createdAt: DateTime!
   updatedAt: DateTime!
   sessionId: ID!
-  session: GameSession!
   boardClueId: ID
-  boardClue: BoardClue
   colIndex: Int!
   rowIndex: Int!
   value: Int!
@@ -103,11 +97,112 @@ type SessionClue {
   opened: Boolean!
 }
 
+type StartGameSessionPayload {
+  session: GameSession!
+  guestHostToken: String
+}
+
+input CreateBoardInput {
+  title: String!
+  description: String
+  isPublic: Boolean = true
+}
+
+input UpdateBoardInput {
+  title: String
+  description: String
+  isPublic: Boolean
+}
+
+input AddBoardCategoryInput {
+  boardId: ID!
+  title: String!
+  colIndex: Int!
+}
+
+input UpdateBoardCategoryInput {
+  title: String
+  colIndex: Int
+}
+
+input QuestionSelectionInput {
+  questionId: ID
+  prompt: String
+  answer: String
+}
+
+input AddBoardClueInput {
+  boardId: ID!
+  colIndex: Int!
+  rowIndex: Int!
+  value: Int!
+  question: QuestionSelectionInput!
+}
+
+input UpdateBoardClueInput {
+  colIndex: Int
+  rowIndex: Int
+  value: Int
+  question: QuestionSelectionInput
+}
+
+input StartGameSessionInput {
+  boardId: ID!
+  title: String
+  playerNames: [String!]!
+}
+
 type Query {
   health: String!
   me: User
+  publicBoards(limit: Int = 20, offset: Int = 0): [Board!]!
+  board(id: ID!): Board
+  myBoards(limit: Int = 20, offset: Int = 0): [Board!]!
+  myQuestions(search: String, limit: Int = 20, offset: Int = 0): [Question!]!
+  gameSession(id: ID!, guestHostToken: String): GameSession
 }
 
 type Mutation {
   updateDisplayName(displayName: String!): User!
+
+  createBoard(input: CreateBoardInput!): Board!
+  updateBoard(id: ID!, input: UpdateBoardInput!): Board!
+  deleteBoard(id: ID!): Boolean!
+
+  addBoardCategory(input: AddBoardCategoryInput!): BoardCategory!
+  updateBoardCategory(id: ID!, input: UpdateBoardCategoryInput!): BoardCategory!
+  reorderBoardCategories(boardId: ID!, categoryIds: [ID!]!): Board!
+  deleteBoardCategory(id: ID!): Boolean!
+
+  addBoardClue(input: AddBoardClueInput!): BoardClue!
+  updateBoardClue(id: ID!, input: UpdateBoardClueInput!): BoardClue!
+  deleteBoardClue(id: ID!): Boolean!
+  selectDailyDouble(boardId: ID!, clueId: ID!): Board!
+
+  startGameSession(input: StartGameSessionInput!): StartGameSessionPayload!
+  addSessionPlayer(
+    sessionId: ID!
+    name: String!
+    guestHostToken: String
+  ): SessionPlayer!
+  renameSessionPlayer(
+    id: ID!
+    name: String!
+    guestHostToken: String
+  ): SessionPlayer!
+  removeSessionPlayer(id: ID!, guestHostToken: String): Boolean!
+  openSessionClue(id: ID!, guestHostToken: String): SessionClue!
+  adjustPlayerScore(
+    playerId: ID!
+    clueId: ID!
+    direction: ScoreDirection!
+    guestHostToken: String
+  ): SessionPlayer!
+  applyDailyDoubleResult(
+    playerId: ID!
+    clueId: ID!
+    wager: Int!
+    correct: Boolean!
+    guestHostToken: String
+  ): SessionPlayer!
 }

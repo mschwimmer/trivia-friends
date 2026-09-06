@@ -6,9 +6,11 @@ import {
   getBoardPlayabilityIssues,
   requireBoardOwner,
   requirePlayableBoard,
+} from './board-policy.js';
+import {
   requireQuestionCreator,
   requireQuestionReuseAccess,
-} from './board-policy.js';
+} from '../questions/question-policy.js';
 
 describe('board access policy', () => {
   const publicBoard = { ownerId: 'owner-1', isPublic: true };

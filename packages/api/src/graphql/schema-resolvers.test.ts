@@ -1,5 +1,12 @@
-import type { Context } from '../context.js';
-import { resolvers } from './resolvers.js';
+import { ApolloServer } from '@apollo/server';
+import { readFileSync } from 'node:fs';
+import type { Context } from './context.js';
+import { resolvers } from './resolvers/index.js';
+
+const typeDefs = readFileSync(
+  new URL('./schema.graphql', `file://${__filename}`),
+  'utf8'
+);
 
 const currentUser = {
   id: 'user-1',
@@ -27,7 +34,7 @@ describe('profile resolvers', () => {
         { displayName: 'Quizmaster' },
         { currentUser: null } as Context
       )
-    ).rejects.toMatchObject({ extensions: { code: 'UNAUTHENTICATED' } });
+    ).rejects.toMatchObject({ code: 'UNAUTHENTICATED' });
   });
 
   it('normalizes and saves a separate local display name', async () => {
@@ -57,7 +64,16 @@ describe('profile resolvers', () => {
         resolvers.Mutation.updateDisplayName(undefined, { displayName }, {
           currentUser,
         } as Context)
-      ).rejects.toMatchObject({ extensions: { code: 'BAD_USER_INPUT' } });
+      ).rejects.toMatchObject({ code: 'BAD_USER_INPUT' });
     }
+  });
+});
+
+describe('executable GraphQL schema', () => {
+  it('starts with every resolver attached to a declared field', async () => {
+    const server = new ApolloServer({ typeDefs, resolvers });
+
+    await expect(server.start()).resolves.toBeUndefined();
+    await expect(server.stop()).resolves.toBeUndefined();
   });
 });
